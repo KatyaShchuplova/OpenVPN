@@ -8,7 +8,6 @@ from sqlalchemy import desc
 from flask_mail import Mail, Message
 
 
-
 # авторизация пользователей
 @app.route('/')
 def index():
