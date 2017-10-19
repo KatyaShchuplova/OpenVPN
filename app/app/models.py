@@ -1,12 +1,14 @@
 from app import db
-from flask_login import UserMixin
 from app import login_manager
+from flask_login import UserMixin
 
 ROLE_USER = 0
 ROLE_ADMIN = 1
 DEFAULT_ALLOWED_KEY = 15
 DEFAULT_STATUS = 'active'
 
+
+# test
 
 # модель для представления таблицы users
 class User(UserMixin, db.Model):
