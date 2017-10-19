@@ -1,12 +1,11 @@
-from datetime import datetime, timedelta
-
-from flask_login import current_user, login_user, login_required, logout_user
-from flask_mail import Message
-from sqlalchemy import desc
-from werkzeug.security import generate_password_hash, check_password_hash
-
-from app import app, models, db, mail
 from flask import render_template, redirect, request, jsonify, url_for
+from app import app, models, db, login_manager, mail
+#from .forms import LoginForm, RegisterForm, RegisterKeyForm, DeactivationKeyForm
+from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, date, time, timedelta
+from flask_login import LoginManager, UserMixin, current_user, login_user, login_required, logout_user
+from sqlalchemy import desc
+from flask_mail import Mail, Message
 
 
 # авторизация пользователей
