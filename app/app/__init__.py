@@ -10,7 +10,7 @@ Bootstrap(app)
 app.config.from_object('config')
 
 # подключение базы данных
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://admin:admin@192.168.0.61:3306/openvpn'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:admin@192.168.0.61:3306/openvpn'
 db = SQLAlchemy(app)
 
 
@@ -35,4 +35,4 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-from app import views, models
+from . import views, models
