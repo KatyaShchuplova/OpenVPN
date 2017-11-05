@@ -43,6 +43,8 @@ class Key(db.Model):
     status = db .Column(db.String(20))
     ownerId = db.Column(db.Integer, db.ForeignKey('users.id'))
     comment = db.Column(db.String(120))
+    isCreated = db.Column(db.Boolean, default=False)
+    key = db.Column(db.String)
 
     def __repr__(self):
         return '{}'.format(self.uniqueName)
