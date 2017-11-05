@@ -51,9 +51,11 @@ def sign_up_post():
         try:
             hashed_password = generate_password_hash(_password, method='sha256')
             new_user = models.User(login=_username, password=hashed_password, email=_email,
-                                   allowedKey=models.DEFAULT_ALLOWED_KEY, role=models.ROLE_USER)
+                                   allowedKey=models.DEFAULT_ALLOWED_KEY, role=models.ROLE_USER,
+                                   port=models.DEFAULT_NEXT_PORT)
             db.session.add(new_user)
             db.session.commit()
+            models.DEFAULT_NEXT_PORT += 1
             return jsonify({'success': 'success'})
         except:
             return jsonify({'error': 'Missing data'})
