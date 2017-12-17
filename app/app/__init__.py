@@ -13,10 +13,8 @@ app.config.from_object('config')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:admin@192.168.0.61:3306/openvpn'
 db = SQLAlchemy(app)
 
-
 # настройка для отправки писем
 mail = Mail(app)
-
 
 # email server
 app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
