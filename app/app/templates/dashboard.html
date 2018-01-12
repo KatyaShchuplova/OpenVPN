@@ -146,7 +146,7 @@
             <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-clock-o"></i> Скоро заканчивается срок действия ключа</span>
               {% if active_key > 0 %}
-              <div class="count green"> {{ nearest_key.uniqueName[:-len] }} </div>
+              <div class="count green"> {{ nearest_key.unique_name[:-len] }} </div>
               <span class="count_bottom"> {{ nearest_key.endDate }}</span>
               {% else %}
               <div class="count green"> {{ nearest_key }} </div>
@@ -227,7 +227,7 @@
                   {% for key in keys %}
                   <div class="widget_summary">
                     <div class="w_left w_25">
-                      <span>{{key.uniqueName[:-len]}}</span>
+                      <span>{{key.unique_name[:-len]}}</span>
                     </div>
                     <div class="w_center w_55">
                       <div class="progress">

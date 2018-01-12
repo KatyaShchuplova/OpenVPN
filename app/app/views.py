@@ -8,7 +8,7 @@ from sqlalchemy import desc
 from flask_mail import Mail, Message
 
 
-# авторизация пользователей
+# user authorization
 @app.route('/')
 def index():
     return redirect(url_for('login'))
@@ -36,7 +36,7 @@ def login_post():
     return jsonify({'error': 'incorrect data'})
 
 
-# регистрация пользователей
+# user registration
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
@@ -51,11 +51,12 @@ def sign_up_post():
         try:
             hashed_password = generate_password_hash(_password, method='sha256')
             new_user = models.User(login=_username, password=hashed_password, email=_email,
-                                   allowedKey=models.DEFAULT_ALLOWED_KEY, role=models.ROLE_USER,
-                                   port=models.DEFAULT_NEXT_PORT)
+                                   allowedKey=models.DEFAULT_ALLOWED_KEY, role=models.ROLE_USER)
             db.session.add(new_user)
             db.session.commit()
-            models.DEFAULT_NEXT_PORT += 1
+            # port update
+            models.User.query.filter_by(id=new_user.id).update({'port': models.DEFAULT_PORT + new_user.id})
+            db.session.commit()
             return jsonify({'success': 'success'})
         except:
             return jsonify({'error': 'Missing data'})
@@ -63,17 +64,17 @@ def sign_up_post():
         return jsonify({'error': 'Missing data'})
 
 
-# домашняя страница dashboard
+# homepage for users (dashboard)
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    list_active_keys = models.Key.query.filter_by(ownerId=current_user.id, status='active').all()
+    list_active_keys = models.Key.query.filter_by(owner_id=current_user.id, status='active').all()
     _len = len(current_user.login)
     count_allowed_key = current_user.allowedKey
-    count_active_key = len(models.Key.query.filter_by(ownerId=current_user.id, status='active').all())
+    count_active_key = len(models.Key.query.filter_by(owner_id=current_user.id, status='active').all())
     if count_active_key > 0:
-        nearest_key = models.Key.query.filter_by(ownerId=current_user.id,
-                                                 status='active').order_by(desc(models.Key.endDate)).first()
+        nearest_key = models.Key.query.filter_by(owner_id=current_user.id,
+                                                 status='active').order_by(desc(models.Key.date_end)).first()
     else:
         nearest_key = '-'
     return render_template('dashboard.html', user=current_user, allowed_key=count_allowed_key,
@@ -93,7 +94,7 @@ def send_emails():
         return jsonify({'error': 'email not sent'})
 
 
-# генерация ключей
+# key generation
 @app.route('/key-generation')
 @login_required
 def key_generation():
@@ -107,7 +108,7 @@ def process():
     days = request.form['days']
     comment = request.form['comment']
     count_allowed_key = current_user.allowedKey
-    count_active_key = len(models.Key.query.filter_by(ownerId=current_user.id, status='active').all())
+    count_active_key = len(models.Key.query.filter_by(owner_id=current_user.id, status='active').all())
     if count_allowed_key > count_active_key:
         if unique_name and days:
             try:
@@ -115,7 +116,8 @@ def process():
                 delta = timedelta(int(days))
                 end_date = start_date + delta
                 unique_name = unique_name + current_user.login
-                new_key = models.Key(uniqueName=unique_name, startDate=start_date, endDate=end_date, status=models.DEFAULT_STATUS, ownerId=current_user.id, comment=comment)
+                new_key = models.Key(unique_name=unique_name, date_start=start_date, date_end=end_date,
+                                     status=models.DEFAULT_STATUS, owner_id=current_user.id, comment=comment, key='')
                 print(new_key)
                 db.session.add(new_key)
                 db.session.commit()
@@ -132,7 +134,7 @@ def process():
 @app.route('/key-deactivation')
 @login_required
 def key_deactivation():
-    keys = models.Key.query.filter_by(ownerId=current_user.id, status='active').all()
+    keys = models.Key.query.filter_by(owner_id=current_user.id, status='active').all()
     length_login = len(current_user.login)
     return render_template('key-deactivation.html', user=current_user, keys=keys, len=length_login)
 
@@ -144,7 +146,7 @@ def process_delete():
     if unique_name:
         try:
             unique_name = unique_name
-            models.Key.query.filter_by(uniqueName=unique_name).update({'status': 'delete'})
+            models.Key.query.filter_by(unique_name=unique_name).update({'status': 'delete'})
             db.session.commit()
             return jsonify({'success': 'unique_name'})
         except:
@@ -157,7 +159,7 @@ def process_delete():
 @app.route('/keys-list')
 @login_required
 def show_keys_list():
-    keys = models.Key.query.filter_by(ownerId=current_user.id).all()
+    keys = models.Key.query.filter_by(owner_id=current_user.id).all()
     length_login = len(current_user.login)
     return render_template('keys-list.html', user=current_user, keys=keys, len=length_login)
 
@@ -166,7 +168,7 @@ def show_keys_list():
 @app.route('/key-management')
 @login_required
 def key_management():
-    keys = models.Key.query.filter_by(ownerId=current_user.id, status='active').all()
+    keys = models.Key.query.filter_by(owner_id=current_user.id, status='active').all()
     length_login = len(current_user.login)
     return render_template('key-management.html', user=current_user, keys=keys, len=length_login)
 

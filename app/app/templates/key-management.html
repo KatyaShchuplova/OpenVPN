@@ -194,10 +194,10 @@
                       <tbody>
                       {% for key in keys %}
                         <tr>
-                          <td> {{key.uniqueName[:-len]}} </td>
+                          <td> {{key.unique_name[:-len]}} </td>
                           <td> {{key.comment}} </td>
-                          <td> {{key.startDate}} </td>
-                          <td> {{key.endDate}} </td>
+                          <td> {{key.date_start}} </td>
+                          <td> {{key.date_start}} </td>
                           <td><button type="button" class="btn btn-success" data-toggle="modal" data-target=".bs-example-modal-lg">Скачать</button></td>
                           <td><button type="button" class="btn btn-success" data-toggle="modal" data-target=".bs-example-modal-sm">Удалить</button></td>
                         </tr>

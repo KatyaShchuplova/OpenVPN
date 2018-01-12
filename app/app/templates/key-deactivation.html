@@ -180,7 +180,7 @@
                           <select id="choiceKey" class="form-control" required>
                             <option value="">Выбор ключа</option>
                             {% for key in keys %}
-                            <option value='{{key.uniqueName}}'>{{key.uniqueName[:-len]}}</option>
+                            <option value='{{key.unique_name}}'>{{key.unique_name[:-len]}}</option>
                             {% endfor %}
                           </select>
                       </div>
