@@ -137,8 +137,10 @@
                                   styling: 'bootstrap3'
                               }); }
 
-    else {  window.location.href ='/dashboard'; }
+    else if (data.admin) { window.location.href ='/dashboard-admin'; }
 
+
+    else { window.location.href ='/dashboard'; }
 
 
     });

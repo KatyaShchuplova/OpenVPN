@@ -1,11 +1,9 @@
-from flask import render_template, redirect, request, jsonify, url_for
 from app import app, models, db, login_manager, mail
-#from .forms import LoginForm, RegisterForm, RegisterKeyForm, DeactivationKeyForm
-from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date, time, timedelta
+from flask import render_template, redirect, request, jsonify, url_for
 from flask_login import LoginManager, UserMixin, current_user, login_user, login_required, logout_user
 from sqlalchemy import desc
-from flask_mail import Mail, Message
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 # user authorization
@@ -28,9 +26,14 @@ def login_post():
             user = models.User.query.filter_by(login=_username).first()
             if user:
                 if check_password_hash(user.password, _password):
-                    login_user(user)
-                    redirect_url = url_for('dashboard')
-                    return jsonify({'success': 'success'})
+                    # admin authorization
+                    if user.role == 1:
+                        login_user(user)
+                        return jsonify({'admin': 'admin success'})
+                    # user authorization
+                    else:
+                        login_user(user)
+                        return jsonify({'success': 'success'})
         except:
             return jsonify({'error': 'incorrect data'})
     return jsonify({'error': 'incorrect data'})
@@ -50,8 +53,7 @@ def sign_up_post():
     if _username and _email and _password:
         try:
             hashed_password = generate_password_hash(_password, method='sha256')
-            new_user = models.User(login=_username, password=hashed_password, email=_email,
-                                   allowedKey=models.DEFAULT_ALLOWED_KEY, role=models.ROLE_USER)
+            new_user = models.User(login=_username, password=hashed_password, email=_email)
             db.session.add(new_user)
             db.session.commit()
             # port update
@@ -64,13 +66,13 @@ def sign_up_post():
         return jsonify({'error': 'Missing data'})
 
 
-# homepage for users (dashboard)
+# dashboard for users
 @app.route('/dashboard')
 @login_required
 def dashboard():
     list_active_keys = models.Key.query.filter_by(owner_id=current_user.id, status='active').all()
     _len = len(current_user.login)
-    count_allowed_key = current_user.allowedKey
+    count_allowed_key = current_user.allowed_key
     count_active_key = len(models.Key.query.filter_by(owner_id=current_user.id, status='active').all())
     if count_active_key > 0:
         nearest_key = models.Key.query.filter_by(owner_id=current_user.id,
@@ -81,17 +83,17 @@ def dashboard():
                            active_key=count_active_key, nearest_key=nearest_key, len=_len, keys=list_active_keys)
 
 
-# отправка писем администратору на запрос ключей
-@app.route('/send_emails', methods=['POST'])
+# отправка запроса администратору на изменение количества ключей
+@app.route('/send_request', methods=['POST'])
 @login_required
-def send_emails():
+def send_request():
     try:
-        message = Message('I need more keys', sender='youropenvpn@gmail.com', recipients=['e.shchuplova@gmail.com'])
-        print(message)
-        mail.send(message)
-        return jsonify({'success': 'email sent'})
+        _wanted_key = request.form['count_active_key']
+        models.User.query.filter_by(id=current_user.id).update({'wanted_key': _wanted_key})
+        db.session.commit()
+        return jsonify({'success': 'request sent'})
     except:
-        return jsonify({'error': 'email not sent'})
+        return jsonify({'error': 'request not sent'})
 
 
 # key generation
@@ -107,7 +109,7 @@ def process():
     unique_name = request.form['unique_name']
     days = request.form['days']
     comment = request.form['comment']
-    count_allowed_key = current_user.allowedKey
+    count_allowed_key = current_user.allowed_key
     count_active_key = len(models.Key.query.filter_by(owner_id=current_user.id, status='active').all())
     if count_allowed_key > count_active_key:
         if unique_name and days:
@@ -118,7 +120,6 @@ def process():
                 unique_name = unique_name + current_user.login
                 new_key = models.Key(unique_name=unique_name, date_start=start_date, date_end=end_date,
                                      status=models.DEFAULT_STATUS, owner_id=current_user.id, comment=comment, key='')
-                print(new_key)
                 db.session.add(new_key)
                 db.session.commit()
                 return jsonify({'name': 'unique_name'})
@@ -181,8 +182,56 @@ def log_out():
     return redirect(url_for('login'))
 
 
-# домашняя страница dashboard для администратора
+# dashboard for admins
 @app.route('/dashboard-admin')
 @login_required
 def dashboard_admin():
-    return render_template('dashboard-admin.html', user=current_user)
+    keys = models.Key.query.all()
+    return render_template('dashboard-admin.html', user=current_user, keys=keys)
+
+
+@app.route('/user-registration-admin')
+@login_required
+def user_registration_admin():
+    return render_template('user-registration-admin.html', user=current_user)
+
+
+@app.route('/requests-admin')
+@login_required
+def requests_admin():
+    users = models.User.query.filter(models.User.allowed_key != models.User.wanted_key).all()
+    return render_template('requests-admin.html', user=current_user, users=users)
+
+
+@app.route('/management-admin')
+@login_required
+def management_admin():
+    return render_template('management-admin.html', user=current_user)
+
+
+# processing of user requests (allow)
+@app.route('/process-request-allow', methods=['POST'])
+@login_required
+def process_request_allow():
+    try:
+        _id = request.form['id']
+        _wanted_key = request.form['wanted_key']
+        models.User.query.filter_by(id=_id).update({'allowed_key': _wanted_key})
+        db.session.commit()
+        return jsonify({'success': 'success'})
+    except:
+        return jsonify({'error': 'Missing data'})
+
+
+# processing of user requests (deny)
+@app.route('/process-request-deny', methods=['POST'])
+@login_required
+def process_request_deny():
+    try:
+        _id = request.form['id']
+        _count_key = request.form['count_key']
+        models.User.query.filter_by(id=_id).update({'wanted_key': _count_key})
+        db.session.commit()
+        return jsonify({'success': 'success'})
+    except:
+        return jsonify({'error': 'Missing data'})

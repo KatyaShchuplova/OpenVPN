@@ -178,15 +178,15 @@
                           <h4 class="modal-title" id="myModalLabel">Запрос на большее количество ключей</h4>
                         </div>
                         <div class="modal-body">
-                          <h4>Письмо администратору</h4>
+                          <h4>Запрос о большем количестве ключей</h4>
                           <p>Введите количество активных ключей, которое вам необходимо</p>
                           <input type="text" id="countKeyInput" class="form-control" placeholder="Количество ключей" required="" />
                           <p>После нажатия на кнопку "Отправить письмо" ваше письмо с запросом на большее количество активных ключей
-                          отправится администратору. Если администратор одобрит ваш запрос, вам придет об том уведомление.</p>
+                          отправится администратору. Если администратор одобрит ваш запрос, вам придет об этом уведомление.</p>
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                          <button type="submit" class="btn btn-primary">Отправить письмо</button>
+                          <button type="submit" class="btn btn-primary">Отправить запрос</button>
                         </div>
 
                       </div>
@@ -319,21 +319,21 @@
     count_active_key: $('#countKeyInput').val(),
     },
     type : 'POST',
-    url : '/send_emails'
+    url : '/send_request'
     })
 
     .done(function(data) {
 
     if (data.success) { new PNotify({
                                   title: 'Внимание!',
-                                  text: 'Письмо администратору успешно отправлено',
+                                  text: 'Запрос администратору успешно отправлен',
                                   type: 'success',
                                   styling: 'bootstrap3'
                               }); }
 
     else { new PNotify({
                                   title: 'Внимание!',
-                                  text: 'Письмо не отправлено. Произошел сбой.',
+                                  text: 'Запрос не отправлен. Произошел сбой.',
                                   type: 'error',
                                   styling: 'bootstrap3'
                               }); }
