@@ -143,10 +143,10 @@ def key_deactivation():
 @app.route('/process-delete', methods=['POST'])
 @login_required
 def process_delete():
-    unique_name = request.form['unique_name']
+    unique_name = request.form['unique_name'].strip()
     if unique_name:
         try:
-            unique_name = unique_name
+            print(unique_name)
             models.Key.query.filter_by(unique_name=unique_name).update({'status': 'delete'})
             db.session.commit()
             return jsonify({'success': 'unique_name'})
@@ -203,12 +203,6 @@ def requests_admin():
     return render_template('requests-admin.html', user=current_user, users=users)
 
 
-@app.route('/management-admin')
-@login_required
-def management_admin():
-    return render_template('management-admin.html', user=current_user)
-
-
 # processing of user requests (allow)
 @app.route('/process-request-allow', methods=['POST'])
 @login_required
@@ -235,3 +229,59 @@ def process_request_deny():
         return jsonify({'success': 'success'})
     except:
         return jsonify({'error': 'Missing data'})
+
+
+@app.route('/management-admin')
+@login_required
+def management_admin():
+    return render_template('management-admin.html', user=current_user)
+
+
+@app.route('/key-generation-admin')
+@login_required
+def key_generation_admin():
+    users = models.User.query.filter_by(role=models.ROLE_USER).all()
+    return render_template('key-generation-admin.html', user=current_user, users=users)
+
+
+@app.route('/key-deactivation-admin')
+@login_required
+def key_deactivation_admin():
+    keys = models.Key.query.filter_by(status='active').all()
+    users = models.User.query.filter_by(role=models.ROLE_USER).all()
+    return render_template('key-deactivation-admin.html', user=current_user, keys=keys, users=users)
+
+
+@app.route('/key-generation-admin-process', methods=['POST'])
+@login_required
+def key_generation_admin_process():
+    user_id = request.form['user_id']
+    unique_name = request.form['unique_name']
+    days = request.form['days']
+    comment = request.form['comment']
+    user = models.User.query.filter_by(id=user_id).first()
+    count_allowed_key = user.allowed_key
+    count_active_key = len(models.Key.query.filter_by(owner_id=user.id, status='active').all())
+    if count_allowed_key > count_active_key:
+        if user_id and unique_name and days:
+            try:
+                start_date = datetime.now()
+                delta = timedelta(int(days))
+                end_date = start_date + delta
+                unique_name = unique_name + user.login
+                new_key = models.Key(unique_name=unique_name, date_start=start_date, date_end=end_date,
+                                     status=models.DEFAULT_STATUS, owner_id=user_id, comment=comment, key='')
+                db.session.add(new_key)
+                db.session.commit()
+                return jsonify({'name': 'unique_name'})
+            except:
+                return jsonify({'error': 'Missing data'})
+        else:
+            return jsonify({'error': 'Missing data'})
+    else:
+        return jsonify({'error': 'More keys can not be created'})
+
+
+def get_login_on_id(id_user):
+    user = models.User.query.filter_by(id=id_user).first()
+    return user.login
