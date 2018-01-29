@@ -9,9 +9,7 @@ DEFAULT_STATUS = 'active'
 DEFAULT_PORT = 30000
 
 
-# test
-
-# модель для представления таблицы users
+# model to represent the table "users"
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -34,7 +32,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-# модель для представления таблицы keys
+# model to represent the table "keys"
 class Key(db.Model):
     __tablename__ = 'keys'
     id = db.Column(db.Integer, primary_key=True)
@@ -49,3 +47,13 @@ class Key(db.Model):
 
     def __repr__(self):
         return '{}'.format(self.unique_name)
+
+
+# # model to represent the table "status"
+class Status(db.Model):
+    __tablename__ = 'status'
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(11), unique=True)
+
+    def __repr__(self):
+        return '{}'.format(self.status)

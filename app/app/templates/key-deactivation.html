@@ -15,7 +15,7 @@
     <link href="static/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- NProgress -->
     <link href="static/vendors/nprogress/nprogress.css" rel="stylesheet">
-        <!-- PNotify -->
+    <!-- PNotify -->
     <link href="static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
     <link href="static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
     <link href="static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
@@ -27,8 +27,6 @@
     <link href="static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
     <link href="static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
     <link href="static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
-
-
 
     <!-- Custom Theme Style -->
     <link href="static/build/css/custom.min.css" rel="stylesheet">
@@ -153,7 +151,7 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>Выберите ключ <small> который хотите удалить</small></h2>
+                    <h2>Выберите ключ <small> который хотите отозвать</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -175,7 +173,7 @@
                     <br />
                     <form id="demo-form2" method="post" data-parsley-validate class="form-horizontal form-label-left">
                     <div class="form-group">
-                      <label for="choiceKey" class="control-label col-md-3 col-sm-3 col-xs-12">Удалить ключ:</label>
+                      <label for="choiceKey" class="control-label col-md-3 col-sm-3 col-xs-12">Отозвать ключ:</label>
                       <div class="col-md-6 col-sm-6 col-xs-12">
                           <select id="choiceKey" class="form-control" required>
                             <option value="">Выбор ключа</option>
@@ -188,10 +186,9 @@
                       <div class="ln_solid"></div>
                       <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
 						  <button class="btn btn-primary" type="reset">Сбросить</button>
-                          <button type="button" class="btn btn-success" data-toggle="modal" data-target=".bs-example-modal-sm">Удалить</button>
+                          <button type="button" class="btn btn-success" data-toggle="modal" data-target=".bs-example-modal-sm">Отозвать</button>
                         </div>
-                      </form>
-                      </div>
+
 
                   <!-- Small modal -->
 
@@ -206,16 +203,18 @@
                         </div>
                         <div class="modal-body">
                           <h4>Внимание!</h4>
-                          <p>Нажимая на кнопку "Удалить", вы удалите ключ безвозвратно.</p>
+                          <p>Нажимая на кнопку "Отозвать", вы отзовете ключ безвозвратно.</p>
                           <p>В дальнейшем его нельзя будет восстановить.</p>
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                          <button type="submit" class="btn btn-primary">Удалить</button>
+                          <button type="submit" class="btn btn-primary">Отозвать</button>
                         </div>
 
                       </div>
                     </div>
+                  </div>
+                      </form>
                   </div>
                   <!-- Small modal -->
                   </div>
@@ -260,7 +259,7 @@
     <script src="static/vendors/pnotify/dist/pnotify.buttons.js"></script>
     <script src="static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
 
-	    <!-- My script to send data to server -->
+    <!-- My script to send data to server -->
     <script>
     $(document).ready(function() {
 
@@ -278,14 +277,14 @@
 
     if (data.success) { new PNotify({
                                   title: 'Успешное завершение операции',
-                                  text: 'Ключ успешно удален',
+                                  text: 'Ключ успешно отозван',
                                   type: 'success',
                                   styling: 'bootstrap3'
                               }); }
 
     else { new PNotify({
                                   title: 'Ошибка!',
-                                  text: 'Ключ не удален',
+                                  text: 'Ключ не отозван',
                                   type: 'error',
                                   styling: 'bootstrap3'
                               }); }

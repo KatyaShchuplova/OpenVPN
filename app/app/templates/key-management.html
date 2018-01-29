@@ -186,7 +186,6 @@
                           <th>Начало действия ключа</th>
                           <th>Конец действия ключа</th>
                           <th>Скачать</th>
-                          <th>Деактивировать</th>
                         </tr>
                       </thead>
 
@@ -194,19 +193,18 @@
                       <tbody>
                       {% for key in keys %}
                         <tr>
-                          <td> {{key.unique_name[:-len]}} </td>
+                          <td class="key-unique-name"> {{key.unique_name[:-len]}} </td>
                           <td> {{key.comment}} </td>
                           <td> {{key.date_start}} </td>
                           <td> {{key.date_start}} </td>
-                          <td><button type="button" class="btn btn-success" data-toggle="modal" data-target=".bs-example-modal-lg">Скачать</button></td>
-                          <td><button type="button" class="btn btn-success" data-toggle="modal" data-target=".bs-example-modal-sm">Удалить</button></td>
+                          <td><button type="button" class="btn-download btn btn-success">Скачать</button></td>
                         </tr>
                       {% endfor %}
                       </tbody>
                     </table>
                   </div>
 
-                    <!-- Small modal -->
+                    <!-- Small modal
 
                   <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog modal-sm">
@@ -283,34 +281,41 @@
     <script src="static/vendors/pdfmake/build/pdfmake.min.js"></script>
     <script src="static/vendors/pdfmake/build/vfs_fonts.js"></script>
 
+    <!-- PNotify -->
+    <script src="static/vendors/pnotify/dist/pnotify.js"></script>
+    <script src="static/vendors/pnotify/dist/pnotify.buttons.js"></script>
+    <script src="static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+
     <!-- Custom Theme Scripts -->
     <script src="static/build/js/custom.min.js"></script>
    <!-- My script to send data to server -->
     <script>
     $(document).ready(function() {
 
-    $('form').on('submit', function(event) {
+    $(".btn-download").click(function() {
 
     $.ajax({
     data: {
-    unique_name: $('#choiceKey option:selected').val()
+
+      unique_name:  $(this).closest('tr').find('td.key-unique-name').text(),
+
     },
     type : 'POST',
-    url : '/process-delete'
+    url : '/process-download'
     })
 
     .done(function(data) {
 
     if (data.success) { new PNotify({
                                   title: 'Успешное завершение операции',
-                                  text: 'Ключ успешно удален',
+                                  text: 'Ключ успешно скачан.',
                                   type: 'success',
                                   styling: 'bootstrap3'
                               }); }
 
     else { new PNotify({
                                   title: 'Ошибка!',
-                                  text: 'Ключ не удален',
+                                  text: 'Ключ не скачан.',
                                   type: 'error',
                                   styling: 'bootstrap3'
                               }); }
@@ -324,6 +329,8 @@
 
     });
     </script>
+
+
   <script>
      $(document).ready(function (){
              $('.ui-pnotify').remove();

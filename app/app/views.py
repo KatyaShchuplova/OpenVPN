@@ -156,6 +156,22 @@ def process_delete():
         return jsonify({'error': 'Missing data'})
 
 
+@app.route('/process-download', methods=['POST'])
+@login_required
+def process_download():
+    unique_name = request.form['unique_name'].strip()
+    if unique_name:
+        try:
+            key = models.Key.query.filter_by(unique_name=unique_name + current_user.login).first()
+            with open("conf", "w") as file:
+                file.write(key.key)
+            return jsonify({'success': 'unique_name'})
+        except:
+            return jsonify({'error': 'Missing data'})
+    else:
+        return jsonify({'error': 'Missing data'})
+
+
 # список ключей пользователя
 @app.route('/keys-list')
 @login_required
