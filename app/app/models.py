@@ -47,13 +47,3 @@ class Key(db.Model):
 
     def __repr__(self):
         return '{}'.format(self.unique_name)
-
-
-# # model to represent the table "status"
-class Status(db.Model):
-    __tablename__ = 'status'
-    id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.String(11), unique=True)
-
-    def __repr__(self):
-        return '{}'.format(self.status)
