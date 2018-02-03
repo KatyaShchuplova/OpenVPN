@@ -43,6 +43,7 @@ class Key(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comment = db.Column(db.String(120))
     isCreated = db.Column(db.Boolean, default=False)
+    is_revoked = db.Column(db.Boolean, default=False)
     key = db.Column(db.String)
 
     def __repr__(self):

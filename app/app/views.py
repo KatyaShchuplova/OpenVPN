@@ -1,4 +1,5 @@
-from app import app, models, db, login_manager, mail
+import os
+from app import app, models, db, login_manager
 from datetime import datetime, date, time, timedelta
 from flask import render_template, redirect, request, jsonify, url_for
 from flask_login import LoginManager, UserMixin, current_user, login_user, login_required, logout_user
@@ -164,7 +165,7 @@ def process_download():
     if unique_name:
         try:
             key = models.Key.query.filter_by(unique_name=unique_name + current_user.login).first()
-            with open("conf", "w") as file:
+            with open('key_conf.ovpn', "w") as file:
                 file.write(key.key)
             return jsonify({'success': 'unique_name'})
         except:
