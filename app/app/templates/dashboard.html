@@ -203,7 +203,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel tile fixed_height_320">
                 <div class="x_title">
-                  <h2>Активные ключи</h2>
+                  <h2>Активные ключи (процент использования каждого ключа) </h2>
                   <ul class="nav navbar-right panel_toolbox">
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                     </li>
@@ -229,8 +229,8 @@
                     </div>
                     <div class="w_center w_55">
                       <div class="progress">
-                        <div class="progress-bar bg-green" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 10%;">
-                          <span class="sr-only">60% Complete</span>
+                        <div class="progress-bar bg-green" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                             style="width: {{((date_now - key.date_start).days / (key.date_end - key.date_start).days)* 100}}%;">
                         </div>
                       </div>
                     </div>

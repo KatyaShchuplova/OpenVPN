@@ -76,11 +76,12 @@ def dashboard():
     count_active_key = len(models.Key.query.filter_by(owner_id=current_user.id, status='active').all())
     if count_active_key > 0:
         nearest_key = models.Key.query.filter_by(owner_id=current_user.id,
-                                                 status='active').order_by(desc(models.Key.date_end)).first()
+                                                 status='active').order_by(models.Key.date_end).first()
     else:
         nearest_key = '-'
+    date_now = datetime.now()
     return render_template('dashboard.html', user=current_user, allowed_key=count_allowed_key,
-                           active_key=count_active_key, nearest_key=nearest_key, len=_len, keys=list_active_keys)
+                           active_key=count_active_key, nearest_key=nearest_key, len=_len, keys=list_active_keys, date_now=date_now)
 
 
 # отправка запроса администратору на изменение количества ключей
@@ -245,12 +246,6 @@ def process_request_deny():
         return jsonify({'success': 'success'})
     except:
         return jsonify({'error': 'Missing data'})
-
-
-@app.route('/management-admin')
-@login_required
-def management_admin():
-    return render_template('management-admin.html', user=current_user)
 
 
 @app.route('/key-generation-admin')
