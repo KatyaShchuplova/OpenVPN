@@ -158,7 +158,7 @@ def process_delete():
         return jsonify({'error': 'Missing data'})
 
 
-@app.route('/process-download', methods=['GET', 'POST'])
+@app.route('/process-download', methods=['POST'])
 @login_required
 def process_download():
     unique_name = request.form['unique_name'].strip()
@@ -168,17 +168,20 @@ def process_download():
             key = models.Key.query.filter_by(unique_name=unique_name_key).first()
             filename = unique_name_key + ".ovpn"
             basedir = os.path.abspath(os.path.dirname(__file__))
-            print(basedir)
             filename_with_abs_path = os.path.join(basedir, filename)
-            print(filename_with_abs_path)
             with open(filename_with_abs_path, "w") as file:
                 file.write(key.key)
-                print("file ok")
-            return send_file(filename_with_abs_path, attachment_filename=filename)
+            return jsonify({'success': filename})
         except:
             return jsonify({'error': 'Missing data'})
     else:
         return jsonify({'error': 'Missing data'})
+
+
+@app.route('/return-files/<arg>')
+@login_required
+def return_files(arg):
+    return send_file(arg, as_attachment=True, mimetype='application/x-openvpn-profile')
 
 
 # список ключей пользователя

@@ -259,6 +259,8 @@
 
     <!-- Custom Theme Scripts -->
     <script src="static/build/js/custom.min.js"></script>
+
+
    <!-- My script to send data to server -->
     <script>
     $(document).ready(function() {
@@ -277,12 +279,7 @@
 
     .done(function(data) {
 
-    if (data.success) { new PNotify({
-                                  title: 'Успешное завершение операции',
-                                  text: 'Ключ успешно скачан.',
-                                  type: 'success',
-                                  styling: 'bootstrap3'
-                              }); }
+    if (data.success) { window.location.href ='/return-files/' + data.success;  }
 
     else { new PNotify({
                                   title: 'Ошибка!',
