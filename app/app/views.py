@@ -168,9 +168,12 @@ def process_download():
             key = models.Key.query.filter_by(unique_name=unique_name_key).first()
             filename = unique_name_key + ".ovpn"
             basedir = os.path.abspath(os.path.dirname(__file__))
+            print(basedir)
             filename_with_abs_path = os.path.join(basedir, filename)
+            print(filename_with_abs_path)
             with open(filename_with_abs_path, "w") as file:
                 file.write(key.key)
+                print("file ok")
             return send_file(filename_with_abs_path, attachment_filename=filename)
         except:
             return jsonify({'error': 'Missing data'})
