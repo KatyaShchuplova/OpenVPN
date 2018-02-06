@@ -13,9 +13,6 @@ app.config.from_object('config')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:admin@192.168.0.61:3306/openvpn'
 db = SQLAlchemy(app)
 
-# настройка для сохранения конфигурационных файлов ключей
-
-
 # авторизация пользователей
 login_manager = LoginManager()
 login_manager.init_app(app)

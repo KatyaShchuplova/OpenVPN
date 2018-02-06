@@ -1,7 +1,7 @@
 import os
 from app import app, models, db, login_manager
 from datetime import datetime, date, time, timedelta
-from flask import render_template, redirect, request, jsonify, url_for
+from flask import render_template, redirect, request, jsonify, url_for, send_file
 from flask_login import LoginManager, UserMixin, current_user, login_user, login_required, logout_user
 from sqlalchemy import desc
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -158,16 +158,20 @@ def process_delete():
         return jsonify({'error': 'Missing data'})
 
 
-@app.route('/process-download', methods=['POST'])
+@app.route('/process-download', methods=['GET', 'POST'])
 @login_required
 def process_download():
     unique_name = request.form['unique_name'].strip()
     if unique_name:
         try:
-            key = models.Key.query.filter_by(unique_name=unique_name + current_user.login).first()
-            with open('key_conf.ovpn', "w") as file:
+            unique_name_key = unique_name + current_user.login
+            key = models.Key.query.filter_by(unique_name=unique_name_key).first()
+            filename = unique_name_key + ".ovpn"
+            basedir = os.path.abspath(os.path.dirname(__file__))
+            filename_with_abs_path = os.path.join(basedir, filename)
+            with open(filename_with_abs_path, "w") as file:
                 file.write(key.key)
-            return jsonify({'success': 'unique_name'})
+            return send_file(filename_with_abs_path, attachment_filename=filename)
         except:
             return jsonify({'error': 'Missing data'})
     else:
