@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+
+   web:
+    build: web
+    ports:
+      - 81:80
+    restart: always
+
+   db:
+    build: db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: openvpn
+   phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
